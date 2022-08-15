@@ -1,23 +1,26 @@
-import logo from './logo.svg';
+import Header from "./components/header/Header"
+import ExchangeRate from "./components/exchangeRate/ExchangeRate";
+import Footer from "./components/footer/Footer";
 import './App.css';
 
-function App() {
+import {UseGetApi, getCurrencyPrice, roundingNumber} from './functions/secondaryFunctions'
+
+const App = (props) => {
+  const data =  UseGetApi();
+  const dataExchangeRate = getCurrencyPrice(data);
+  
+  dataExchangeRate.UAH = 1;
+
+  const headerCourse = {
+    usd:roundingNumber(dataExchangeRate.USD),
+    eur:roundingNumber(dataExchangeRate.EUR)
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Header headerCourse={headerCourse}/>
+      <ExchangeRate data={data} dataExchangeRate={dataExchangeRate}/>
+      <Footer />
     </div>
   );
 }
