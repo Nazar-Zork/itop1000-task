@@ -1,15 +1,31 @@
 import { useState, useEffect } from 'react';
 
 export const useGetApi = () =>{
-    const [data, setData] = useState([]);
+    const [requestData, setRequestData] = useState({
+      isLoading: true,
+      data:[],
+      error: null
+    });
     useEffect(() =>{
-      const fetchData = async () => {
-        const response = await fetch('https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json').then(res => res.json()).catch(err => console.log(err));
-        setData(response);
-      }
-      fetchData();
+      fetch('https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json')
+        .then(res => res.json())
+        .then(
+          (result) =>{
+            setRequestData({
+              isLoading: false,
+              data: result,
+              error:false
+            })
+          },
+          (error) =>{
+            setRequestData({
+              isLoading: true,
+              error:error
+            })
+          }
+        )
     }, []);
-    return data;
+    return requestData;
   }
   
 export const getCurrencyPrice = (data) =>{
