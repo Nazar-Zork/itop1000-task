@@ -4,15 +4,18 @@ import Footer from "./components/footer/Footer";
 import './App.css';
 
 import {useGetApi, getCurrencyPrice, roundingNumber} from './functions/secondaryFunctions'
+import { useMemo } from "react";
 
 const App = (props) => {
   const requestData = useGetApi();
   const dataExchangeRate = getCurrencyPrice(requestData.data);
  
-  const headerCourse = {
-    usd:roundingNumber(dataExchangeRate.USD),
-    eur:roundingNumber(dataExchangeRate.EUR)
-  };
+  const headerCourse = useMemo(()=>{
+      let usd = roundingNumber(dataExchangeRate.USD);
+      let eur = roundingNumber(dataExchangeRate.EUR);
+      return{usd,eur}
+    },[dataExchangeRate.USD, dataExchangeRate.EUR]);
+  
   if(requestData.error){
     return(
       <div className="App">
