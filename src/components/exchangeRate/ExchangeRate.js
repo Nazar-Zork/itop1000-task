@@ -1,68 +1,59 @@
-import React, { useRef } from 'react';
+import React, { useState } from 'react';
 import styles from './ExchangeRate.module.css';
-import {roundingNumber} from '../../functions/secondaryFunctions'
+import ExchangeWindow from './exchangeWindow/ExchangeWindow';
+
+import {roundingNumber, trueNumber} from '../../functions/secondaryFunctions'
+
+
+
 
 const ExchangeRate = (props) => {
 
-  const [leftInput, leftSelect, rightInput, rightSelect] = [useRef(),useRef(),useRef(),useRef()]
+  const[formSettings, setFormSettings] = useState({
+    iHaveInput: 1,
+    iHaveSelect: 'UAH',
+    iWillGetInput: 1,
+    iWillGetSelect: 'UAH'
+  });
 
-  const returnInputsRows = () =>{
-    return({
-      leftQuontity: leftInput.current.value,
-      leftOption: leftSelect.current.value,
-      rightQuontity: rightInput.current.value,
-      rightOption: rightSelect.current.value
+  const onChangeHandler = (event) =>{
+
+    event.target.value = trueNumber(event.target.value, event.target.name);
+
+    setFormSettings((prev) =>{
+      switch(event.target.name){
+        case 'iHaveInput':
+          return({...prev,
+            [event.target.name]: event.target.value,
+            iWillGetInput:roundingNumber(event.target.value * props.dataExchangeRate[prev.iHaveSelect]/props.dataExchangeRate[prev.iWillGetSelect])
+          })
+        case 'iWillGetInput':
+          return({...prev,
+            [event.target.name]: event.target.value,
+            iHaveInput: roundingNumber(event.target.value * props.dataExchangeRate[prev.iWillGetSelect]/props.dataExchangeRate[prev.iHaveSelect])
+          })
+        case 'iHaveSelect':
+          return({...prev,
+            [event.target.name]: event.target.value,
+            iWillGetInput: roundingNumber(prev.iHaveInput * props.dataExchangeRate[event.target.value]/props.dataExchangeRate[prev.iWillGetSelect])
+          })
+        case 'iWillGetSelect':
+          return({...prev,
+            [event.target.name]: event.target.value,
+            iHaveInput: roundingNumber(prev.iWillGetInput * props.dataExchangeRate[event.target.value]/props.dataExchangeRate[prev.iHaveSelect])
+          })
+        default:
+          return({
+            ...prev
+          })
+      }
     })
   }
-  
-  const onChangeHandler = (event) =>{
-    
-    if(leftInput.current === event.target || rightInput.current === event.target){
-      if(event.target.value <= 0){
-        event.target.value = 1
-      }
-    }
-
-    let rows = returnInputsRows();
-    
-    if(leftInput.current === event.target || leftSelect.current === event.target){
-      rightInput.current.value =  roundingNumber(rows.leftQuontity * props.dataExchangeRate[rows.leftOption] / props.dataExchangeRate[rows.rightOption]);
-    }else if(rightInput.current === event.target || rightSelect.current === event.target){
-      leftInput.current.value =  roundingNumber(rows.rightQuontity * props.dataExchangeRate[rows.rightOption] / props.dataExchangeRate[rows.leftOption]);
-    }
-  }
-
   return (
     <div className={styles.exchange}>
         <div className={styles.exchange__inner}>
-          <div className={styles.exchangeWindow}>
-            <p className={styles.exchangeWindow__text}>I have:</p>
-            <div className={styles.exchangeWindow__form}>
-              <input className={styles.exchangeWindow__input} type="number" ref={leftInput} onChange={onChangeHandler}/>
-              <select className={styles.exchangeWindow__select} ref={leftSelect} onChange={onChangeHandler}>
-                <option>UAH</option>
-                {
-                props.data.map((item, id) =>{
-                  return(<option key={id}>{item.cc}</option>)
-                })
-                }
-              </select>
-            </div>
-          </div>
-          <div className={styles.exchangeWindow}>
-            <p className={styles.exchangeWindow__text}>I will get:</p>
-            <div className={styles.exchangeWindow__form}>
-              <input className={styles.exchangeWindow__input} type="number" ref={rightInput} onChange={onChangeHandler}/>
-              <select className={styles.exchangeWindow__select} ref={rightSelect} onChange={onChangeHandler}>
-                <option>UAH</option>
-                {
-                props.data.map((item, id) =>{
-                  return(<option key={id}>{item.cc}</option>)
-                })
-                }
-              </select>
-            </div>
-          </div>
+          <ExchangeWindow apiRateData={props.data} formSetings={formSettings} onChangeHandler={onChangeHandler} windowName={['iHaveInput','iHaveSelect']}/>
+          <ExchangeWindow apiRateData={props.data} formSetings={formSettings} onChangeHandler={onChangeHandler} windowName={['iWillGetInput','iWillGetSelect']}/>
         </div>
     </div>
   );

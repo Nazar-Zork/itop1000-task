@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export const UseGetApi = () =>{
+export const useGetApi = () =>{
     const [data, setData] = useState([]);
     useEffect(() =>{
       const fetchData = async () => {
@@ -13,7 +13,7 @@ export const UseGetApi = () =>{
   }
   
 export const getCurrencyPrice = (data) =>{
-    let courseObject = {};
+    let courseObject = {'UAH': 1,};
     data.forEach((item) =>{
       courseObject[item.cc] = item.rate;
     })
@@ -22,4 +22,16 @@ export const getCurrencyPrice = (data) =>{
 
 export const roundingNumber = (number) =>{
     return Math.round(parseFloat(number) * 100) / 100;
+  }
+
+export  const trueNumber = (numb, name) =>{
+    if(name === 'iHaveInput' || name === 'iWillGetInput'){
+      if(numb <= 0){
+        return 1;
+      }else{
+        return numb;
+      }
+    }else{
+      return numb;
+    }
   }
