@@ -25,22 +25,22 @@ const ExchangeRate = (props) => {
         case 'iHaveInput':
           return({...prev,
             [event.target.name]: event.target.value,
-            iWillGetInput:roundingNumber(event.target.value * props.dataExchangeRate[prev.iHaveSelect]/props.dataExchangeRate[prev.iWillGetSelect])
+            iWillGetInput:roundingNumber(event.target.value * props.data[prev.iHaveSelect]/props.data[prev.iWillGetSelect])
           })
         case 'iWillGetInput':
           return({...prev,
             [event.target.name]: event.target.value,
-            iHaveInput: roundingNumber(event.target.value * props.dataExchangeRate[prev.iWillGetSelect]/props.dataExchangeRate[prev.iHaveSelect])
+            iHaveInput: roundingNumber(event.target.value * props.data[prev.iWillGetSelect]/props.data[prev.iHaveSelect])
           })
         case 'iHaveSelect':
           return({...prev,
             [event.target.name]: event.target.value,
-            iWillGetInput: roundingNumber(prev.iHaveInput * props.dataExchangeRate[event.target.value]/props.dataExchangeRate[prev.iWillGetSelect])
+            iWillGetInput: roundingNumber(prev.iHaveInput * props.data[event.target.value]/props.data[prev.iWillGetSelect])
           })
         case 'iWillGetSelect':
           return({...prev,
             [event.target.name]: event.target.value,
-            iHaveInput: roundingNumber(prev.iWillGetInput * props.dataExchangeRate[event.target.value]/props.dataExchangeRate[prev.iHaveSelect])
+            iHaveInput: roundingNumber(prev.iWillGetInput * props.data[event.target.value]/props.data[prev.iHaveSelect])
           })
         default:
           return({
@@ -52,8 +52,8 @@ const ExchangeRate = (props) => {
   return (
     <div className={styles.exchange}>
         <div className={styles.exchange__inner}>
-          <ExchangeWindow apiRateData={props.data} formSetings={formSettings} onChangeHandler={onChangeHandler} windowName={['iHaveInput','iHaveSelect']}/>
-          <ExchangeWindow apiRateData={props.data} formSetings={formSettings} onChangeHandler={onChangeHandler} windowName={['iWillGetInput','iWillGetSelect']}/>
+          <ExchangeWindow apiRateData={Object.keys(props.data)} formSetings={formSettings} onChangeHandler={onChangeHandler} windowName={['iHaveInput','iHaveSelect']}/>
+          <ExchangeWindow apiRateData={Object.keys(props.data)} formSetings={formSettings} onChangeHandler={onChangeHandler} windowName={['iWillGetInput','iWillGetSelect']}/>
         </div>
     </div>
   );

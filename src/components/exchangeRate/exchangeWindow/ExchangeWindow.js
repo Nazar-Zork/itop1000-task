@@ -21,10 +21,9 @@ const ExchangeWindow = (props) => {
                       value={props.windowName.includes("iHaveInput")?props.formSetings.iHaveSelect:props.formSetings.iWillGetSelect}
                       onChange={props.onChangeHandler}
                       name={props.windowName[1]}>
-                <option>UAH</option>
                 {
                   props.apiRateData.map((item, id) =>{
-                    return(<option key={id}>{item.cc}</option>)
+                    return(<option key={id}>{item}</option>)
                   }) 
                 }
               </select>

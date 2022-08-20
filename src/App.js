@@ -3,18 +3,17 @@ import ExchangeRate from "./components/exchangeRate/ExchangeRate";
 import Footer from "./components/footer/Footer";
 import './App.css';
 
-import {useGetApi, getCurrencyPrice, roundingNumber} from './functions/secondaryFunctions'
+import {useGetApi, roundingNumber} from './functions/secondaryFunctions'
 import { useMemo } from "react";
 
 const App = (props) => {
   const requestData = useGetApi();
-  const dataExchangeRate = getCurrencyPrice(requestData.data);
  
   const headerCourse = useMemo(()=>{
-      let usd = roundingNumber(dataExchangeRate.USD);
-      let eur = roundingNumber(dataExchangeRate.EUR);
+      let usd = roundingNumber(requestData.data.USD);
+      let eur = roundingNumber(requestData.data.EUR);
       return{usd,eur}
-    },[dataExchangeRate.USD, dataExchangeRate.EUR]);
+    },[requestData.data.USD, requestData.data.EUR]);
   
   if(requestData.error){
     return(
@@ -32,7 +31,7 @@ const App = (props) => {
     return (
       <div className="App">
         <Header headerCourse={headerCourse}/>
-        <ExchangeRate data={requestData.data} dataExchangeRate={dataExchangeRate}/>
+        <ExchangeRate data={requestData.data}/>
         <Footer />
       </div>
     )
