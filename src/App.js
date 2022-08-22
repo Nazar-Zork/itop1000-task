@@ -2,11 +2,13 @@ import Header from "./components/Header/Header"
 import ExchangeRate from "./components/ExchangeRate/ExchangeRate";
 import Footer from "./components/Footer/Footer";
 import './App.css';
-import {roundingNumber} from './utils/utils'
+import {roundingNumber, reformObject} from './utils/utils'
 import {useGetApi} from './hooks/hooks'
 
 const App = () => {
-  const {isLoading, data, error} = useGetApi();
+  const {isLoading, dataApi, error} = useGetApi('https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json');
+  const data = reformObject(dataApi);
+  
   let [usd, eur] = [roundingNumber(data.USD), roundingNumber(data.EUR)];
   
   if(error){
