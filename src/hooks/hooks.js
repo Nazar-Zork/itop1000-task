@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
 
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 export const useGetApi = () =>{
     const [requestData, setRequestData] = useState({
@@ -8,8 +9,8 @@ export const useGetApi = () =>{
       error: null
     });
     useEffect(() =>{
-      fetch('https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json')
-        .then(res => res.json())
+      axios.get('https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json')
+        .then(res => res.data)
         .then(
           (result) =>{
             let courseObject = {'UAH': 1,};
@@ -31,20 +32,4 @@ export const useGetApi = () =>{
         )
     }, []);
     return requestData;
-  }
-
-export const roundingNumber = (number) =>{
-    return Math.round(parseFloat(number) * 100) / 100;
-  }
-
-export  const trueNumber = (numb, name) =>{
-    if(name === 'iHaveInput' || name === 'iWillGetInput'){
-      if(numb <= 0){
-        return 1;
-      }else{
-        return numb;
-      }
-    }else{
-      return numb;
-    }
   }

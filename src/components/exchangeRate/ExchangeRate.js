@@ -1,59 +1,54 @@
 import React, { useState } from 'react';
 import styles from './ExchangeRate.module.css';
-import ExchangeWindow from './exchangeWindow/ExchangeWindow';
+import ExchangeWindow from './ExchangeWindow/ExchangeWindow';
 
-import {roundingNumber, trueNumber} from '../../functions/secondaryFunctions'
-
-
+import {roundingNumber} from '../../utils/utils'
 
 
-const ExchangeRate = (props) => {
+const ExchangeRate = ({ courseRate }) => {
+  const currenciesNames = Object.keys(courseRate);
 
-  const[formSettings, setFormSettings] = useState({
-    iHaveInput: 1,
-    iHaveSelect: 'UAH',
-    iWillGetInput: 1,
-    iWillGetSelect: 'UAH'
-  });
+  const [iHaveInput, setIHaveInput] = useState(1);
+  const [iHaveSelect, setIHaveSelect] = useState('UAH');
+  const [iWillGetInput, setIWillGetInput] = useState(1);
+  const [iWillGetSelect, setIWillGetSelect] = useState('UAH');
 
-  const onChangeHandler = (event) =>{
-
-    event.target.value = trueNumber(event.target.value, event.target.name);
-
-    setFormSettings((prev) =>{
-      switch(event.target.name){
-        case 'iHaveInput':
-          return({...prev,
-            [event.target.name]: event.target.value,
-            iWillGetInput:roundingNumber(event.target.value * props.data[prev.iHaveSelect]/props.data[prev.iWillGetSelect])
-          })
-        case 'iWillGetInput':
-          return({...prev,
-            [event.target.name]: event.target.value,
-            iHaveInput: roundingNumber(event.target.value * props.data[prev.iWillGetSelect]/props.data[prev.iHaveSelect])
-          })
-        case 'iHaveSelect':
-          return({...prev,
-            [event.target.name]: event.target.value,
-            iWillGetInput: roundingNumber(prev.iHaveInput * props.data[event.target.value]/props.data[prev.iWillGetSelect])
-          })
-        case 'iWillGetSelect':
-          return({...prev,
-            [event.target.name]: event.target.value,
-            iHaveInput: roundingNumber(prev.iWillGetInput * props.data[event.target.value]/props.data[prev.iHaveSelect])
-          })
-        default:
-          return({
-            ...prev
-          })
-      }
-    })
+  const iHaveInputHandler = (iHaveAmount)=>{
+    setIWillGetInput(roundingNumber(iHaveAmount*courseRate[iHaveSelect]/courseRate[iWillGetSelect]));
+    setIHaveInput(iHaveAmount)
   }
+
+  const iHaveSelectHandler = (iHaveCurrency)=>{
+    setIWillGetInput(roundingNumber(iHaveInput*courseRate[iHaveCurrency]/courseRate[iWillGetSelect]));
+    setIHaveSelect(iHaveCurrency)
+  }
+
+  const iWillGetInputHandler = (iWillGetAmount)=>{
+    setIHaveInput(roundingNumber(iWillGetAmount*courseRate[iWillGetSelect]/courseRate[iHaveSelect]));
+    setIWillGetInput(iWillGetAmount)
+  }
+  const iWillGetSelectHandler = (iWillGetCurrency)=>{
+    setIHaveInput(roundingNumber(iWillGetInput*courseRate[iWillGetCurrency]/courseRate[iHaveSelect]));
+    setIWillGetSelect(iWillGetCurrency)
+  }
+
   return (
     <div className={styles.exchange}>
         <div className={styles.exchange__inner}>
-          <ExchangeWindow apiRateData={Object.keys(props.data)} formSetings={formSettings} onChangeHandler={onChangeHandler} windowName={['iHaveInput','iHaveSelect']}/>
-          <ExchangeWindow apiRateData={Object.keys(props.data)} formSetings={formSettings} onChangeHandler={onChangeHandler} windowName={['iWillGetInput','iWillGetSelect']}/>
+          <ExchangeWindow
+              apiCurrencyNames={currenciesNames}
+              inputValue={iHaveInput}
+              selectValue={iHaveSelect}
+              inputHandler={iHaveInputHandler}
+              selectHandler={iHaveSelectHandler}
+              windowName={'iHave'}/>
+          <ExchangeWindow 
+              apiCurrencyNames={currenciesNames}
+              inputValue={iWillGetInput}
+              selectValue={iWillGetSelect}
+              inputHandler={iWillGetInputHandler}
+              selectHandler={iWillGetSelectHandler}
+              windowName={'iWillGet'}/>
         </div>
     </div>
   );

@@ -1,28 +1,34 @@
 import React from 'react';
 import styles from './ExchangeWindow.module.css';
+import { trueNumber } from '../../../utils/utils';
 
+const [iHave, inputType] = ["iHave","number"];
 
-const ExchangeWindow = (props) => {
+const ExchangeWindow = ({apiCurrencyNames, inputValue, selectValue, inputHandler, selectHandler, windowName}) => {
+  const exchangeWindowText = windowName === iHave ? 'I have' : 'I will get';
+
+  const onChangeInput = (e) =>{
+    inputHandler(trueNumber(e.target.value));
+  }
+  const onChangeSelect = (e) =>{
+    selectHandler(e.target.value)
+  }
 
   return (
           <div className={styles.exchangeWindow}>
             <p className={styles.exchangeWindow__text}>
-              {
-                props.windowName.includes("iHaveInput")?'I have':'I will get'
-              }
+              {exchangeWindowText}
             </p>
             <div className={styles.exchangeWindow__form}>
               <input className={styles.exchangeWindow__input}
-                     value={props.windowName.includes("iHaveInput")?props.formSetings.iHaveInput:props.formSetings.iWillGetInput}
-                     onChange={props.onChangeHandler}
-                     name={props.windowName[0]}
-                     type="number"/>
+                     value={inputValue}
+                     onChange={onChangeInput}
+                     type={inputType}/>
               <select className={styles.exchangeWindow__select} 
-                      value={props.windowName.includes("iHaveInput")?props.formSetings.iHaveSelect:props.formSetings.iWillGetSelect}
-                      onChange={props.onChangeHandler}
-                      name={props.windowName[1]}>
+                      value={selectValue}
+                      onChange={onChangeSelect}>
                 {
-                  props.apiRateData.map((item, id) =>{
+                  apiCurrencyNames.map((item, id) =>{
                     return(<option key={id}>{item}</option>)
                   }) 
                 }
